@@ -3,7 +3,7 @@ import Chart from 'chart.js';
 import moment, { DurationInputArg2, unitOfTime } from 'moment';
 
 const generateData = () => {
-  var unit = 'hour';
+  var unit = 'day';
 
   function unitLessThanDay() {
     return unit === 'second' || unit === 'minute' || unit === 'hour';
@@ -181,6 +181,16 @@ export default class TimeGraph extends Component {
     return (
       <div>
         <canvas id="myChart" ref={this.chartRef} />
+        <select id="unit">
+          <option value="second">Second</option>
+          <option value="minute">Minute</option>
+          <option value="year">Year</option>
+          <option value="hour">Hour</option>
+          <option value="day" selected>
+            Day
+          </option>
+          <option value="month">Month</option>
+        </select>
       </div>
     );
   }
