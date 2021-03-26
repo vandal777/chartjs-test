@@ -67,7 +67,7 @@ const generateData = ({ unit }) => {
   return data;
 };
 
-const TimeGraph = ({ unit }) => {
+const TimeGraph = ({ unit, update }) => {
   const chartRef = useRef<any>(null);
 
   useEffect(() => {
@@ -175,7 +175,7 @@ const TimeGraph = ({ unit }) => {
         },
       },
     });
-  }, [unit]);
+  }, [update]);
 
   return (
     <div>
