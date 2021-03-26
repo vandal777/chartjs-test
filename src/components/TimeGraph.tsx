@@ -1,10 +1,8 @@
-import { Component, createRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Chart from 'chart.js';
 import moment, { DurationInputArg2, unitOfTime } from 'moment';
 
-const generateData = () => {
-  var unit = 'day';
-
+const generateData = ({ unit }) => {
   function unitLessThanDay() {
     return unit === 'second' || unit === 'minute' || unit === 'hour';
   }
@@ -69,11 +67,12 @@ const generateData = () => {
   return data;
 };
 
-export default class TimeGraph extends Component {
-  chartRef = createRef<any>();
+const TimeGraph = ({ unit }) => {
+  const chartRef = useRef<any>(null);
 
-  componentDidMount() {
-    const myChartRef = this.chartRef.current.getContext('2d');
+  useEffect(() => {
+    console.log(unit);
+    const myChartRef = chartRef.current.getContext('2d');
 
     new Chart(myChartRef, {
       data: {
@@ -82,7 +81,7 @@ export default class TimeGraph extends Component {
             label: 'CHRT - Chart.js Corporation',
             backgroundColor: '#A2DA70',
             borderColor: '#A2DA70',
-            data: generateData(),
+            data: generateData({ unit }),
             type: 'line',
             pointRadius: 0,
             fill: false,
@@ -176,22 +175,13 @@ export default class TimeGraph extends Component {
         },
       },
     });
-  }
-  render() {
-    return (
-      <div>
-        <canvas id="myChart" ref={this.chartRef} />
-        <select id="unit">
-          <option value="second">Second</option>
-          <option value="minute">Minute</option>
-          <option value="year">Year</option>
-          <option value="hour">Hour</option>
-          <option value="day" selected>
-            Day
-          </option>
-          <option value="month">Month</option>
-        </select>
-      </div>
-    );
-  }
-}
+  }, [unit]);
+
+  return (
+    <div>
+      <canvas ref={chartRef} />
+    </div>
+  );
+};
+
+export default TimeGraph;
