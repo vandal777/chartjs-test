@@ -1,77 +1,11 @@
 import { useEffect, useRef } from 'react';
 import Chart from 'chart.js';
-import moment, { DurationInputArg2, unitOfTime } from 'moment';
+import moment from 'moment';
 
-const generateData = ({ unit }) => {
-  function unitLessThanDay() {
-    return unit === 'second' || unit === 'minute' || unit === 'hour';
-  }
-
-  function beforeNineThirty(date) {
-    return date.hour() < 9 || (date.hour() === 9 && date.minute() < 30);
-  }
-
-  // Returns true if outside 9:30am-4pm on a weekday
-  function outsideMarketHours(date) {
-    if (date.isoWeekday() > 5) {
-      return true;
-    }
-    if (unitLessThanDay() && (beforeNineThirty(date) || date.hour() > 16)) {
-      return true;
-    }
-    return false;
-  }
-
-  function randomNumber(min, max) {
-    return Math.random() * (max - min) + min;
-  }
-
-  const randomBar = ({ date, lastClose }) => {
-    var open = randomNumber(lastClose * 0.95, lastClose * 1.05).toFixed(2);
-    var close = randomNumber(open * 0.95, open * 1.05).toFixed(2);
-    return {
-      t: date.valueOf(),
-      y: close,
-    };
-  };
-
-  var date = moment('Jan 01 1990', 'MMM DD YYYY');
-  var now = moment();
-  var data: any[] = [];
-  var lessThanDay = unitLessThanDay();
-  for (
-    ;
-    data.length < 600 && date.isBefore(now);
-    date = date
-      .clone()
-      .add(1, unit as DurationInputArg2)
-      .startOf(unit as unitOfTime.StartOf)
-  ) {
-    if (outsideMarketHours(date)) {
-      if (!lessThanDay || !beforeNineThirty(date)) {
-        date = date
-          .clone()
-          .add(date.isoWeekday() >= 5 ? 8 - date.isoWeekday() : 1, 'day');
-      }
-      if (lessThanDay) {
-        date = date.hour(9).minute(30).second(0);
-      }
-    }
-    data.push(
-      randomBar({
-        date,
-        lastClose: data.length > 0 ? data[data.length - 1].y : 30,
-      })
-    );
-  }
-  return data;
-};
-
-const TimeGraph = ({ unit, update }) => {
+const TimeGraph = ({ dataCreada }) => {
   const chartRef = useRef<any>(null);
 
   useEffect(() => {
-    console.log(unit);
     const myChartRef = chartRef.current.getContext('2d');
 
     new Chart(myChartRef, {
@@ -81,7 +15,7 @@ const TimeGraph = ({ unit, update }) => {
             label: 'CHRT - Chart.js Corporation',
             backgroundColor: '#A2DA70',
             borderColor: '#A2DA70',
-            data: generateData({ unit }),
+            data: dataCreada,
             type: 'line',
             pointRadius: 0,
             fill: false,
@@ -175,7 +109,7 @@ const TimeGraph = ({ unit, update }) => {
         },
       },
     });
-  }, [update]);
+  }, [chartRef, dataCreada]);
 
   return (
     <div>
